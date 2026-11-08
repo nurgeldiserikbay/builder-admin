@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';\nimport type { FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
 
 type CapabilityStatus = 'supported' | 'limited' | 'docs_only' | 'unsupported';
 type Capability = { id: string; category: string; name: string; status: CapabilityStatus; summary: string; conditions: string[] };
