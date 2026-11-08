@@ -1,5 +1,6 @@
 import CapabilityCatalog from "./capability-catalog";
 import QualityProfiles from "./quality-profiles";
+import AuditEvents from "./audit-events";
 
 const areas = [
   {
@@ -9,10 +10,6 @@ const areas = [
     state: 'Planned',
   },
   {
-    index: '02',
-    name: 'Operations and audit',
-    description: 'Inspect service health, background jobs and security-relevant audit events with role-based access.',
-    state: 'Planned',
   },
 ];
 
@@ -38,6 +35,8 @@ export default function AdminHome() {
         <CapabilityCatalog />
         <div className="section-title planned-heading"><div><h2>Versioned quality profiles</h2><p>Create policy drafts, review history, and activate a specific version.</p></div><span className="count">STAFF ONLY</span></div>
         <QualityProfiles />
+        <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">ROLE RESTRICTED</span></div>
+        <AuditEvents />
         <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
         <div className="area-list">
           {areas.map((area) => <article className="area" key={area.index}>
@@ -46,8 +45,8 @@ export default function AdminHome() {
             <span className="planned">{area.state}</span>
           </article>)}
         </div>
-        <div className="security-note"><span aria-hidden="true">◈</span><div><strong>Admin is a separate trust boundary</strong><p>The public capability manifest contains no project or account data. Editing quality gates, inspecting operations, and managing projects remain unavailable until staff authentication, least-privilege roles, and audit logging are connected.</p></div></div>
-        <footer>BuildPath internal tooling <span>Staff controls are not connected</span></footer>
+        <div className="security-note"><span aria-hidden="true">◈</span><div><strong>Admin is a separate trust boundary</strong><p>The public capability manifest contains no customer project data. Audit history is restricted to authorized staff; project records and release controls remain unavailable until their own scoped workflows are implemented.</p></div></div>
+        <footer>BuildPath internal tooling <span>Customer project and release controls are not connected</span></footer>
       </section>
     </main>
   );
