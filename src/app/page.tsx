@@ -31,7 +31,7 @@ export default function AdminHome() {
         <div className="intro">
           <p className="kicker">ADMINISTRATION</p>
           <h1>Know exactly what the platform can deliver.</h1>
-          <p className="lead">This catalog reads the versioned capability manifest from the backend. It separates working features from limited, documentation-only, and unavailable flows so product claims stay aligned with implementation.</p>
+          <p className="lead">After staff sign-in, the catalog reads the versioned capability manifest from the backend. It separates working features from limited, documentation-only, and unavailable flows so product claims stay aligned with implementation.</p>
         </div>
         <div className="section-title"><div><h2>Current capability manifest</h2><p>Staff-only read endpoint. Statuses are maintained in backend code and versioned with the API.</p></div><span className="count">SOURCE OF TRUTH</span></div>
         <CapabilityCatalog />
