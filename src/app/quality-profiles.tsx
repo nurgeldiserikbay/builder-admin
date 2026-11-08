@@ -8,7 +8,7 @@ type CategoryId = 'security' | 'accessibility' | 'performance' | 'seo';
 type CategoryPolicy = { enabled: boolean; required: boolean; maxOpenCritical: number; maxOpenHigh: number };
 type QualityPolicy = { schemaVersion: 1; minimumRequirementCoverage: number; blockingSeverities: Severity[]; categories: Record<CategoryId, CategoryPolicy> };
 type Version = { version: number; status: 'draft' | 'active' | 'retired'; policy: QualityPolicy; createdAt: string; activatedAt: string | null; authoredBy: string | null };
-type Profile = { key: string; name: string; description: string; createdAt: string; createdBy: string; versions: Version[] };
+type Profile = { key: string; name: string; description: string; isDefault: boolean; createdAt: string; createdBy: string; versions: Version[] };
 type ProfileListResponse = { data?: Profile[] };
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
 const categories: Array<{ id: CategoryId; label: string }> = [
@@ -96,6 +96,14 @@ export default function QualityProfiles() {
     }, 'Draft profile created. Review the policy and activate it when it is ready.');
   }
 
+  async function setDefault() {
+    if (!selected) return;
+    await runAction(async () => {
+      const response = await fetch(API_BASE_URL + '/admin/quality-profiles/' + encodeURIComponent(selected.key) + '/default', { method: 'PUT', credentials: 'include' });
+      if (!response.ok) throw new Error(response.status === 403 ? 'Your role cannot change the default profile.' : 'Could not set default profile (' + response.status + ').');
+    }, selected.name + ' is now the default for new reviews.');
+  }
+
   async function createVersion() {
     if (!selected) return;
     await runAction(async () => {
@@ -149,7 +157,7 @@ export default function QualityProfiles() {
           const active = profile.versions.find((item) => item.status === 'active');
           const draft = profile.versions.find((item) => item.status === 'draft');
           return <button type="button" className="quality-profile-option" aria-pressed={selectedKey === profile.key} key={profile.key} onClick={() => { setSelectedKey(profile.key); setDraftPolicy(null); setDraftVersion(null); }}>
-            <span><strong>{profile.name}</strong><small>{profile.description}</small></span>
+            <span><strong>{profile.name}</strong>{profile.isDefault && <span className="quality-version-badge" data-status="active">Default for new reviews</span>}<small>{profile.description}</small></span>
             <span className="quality-version-badge">{active ? 'v' + active.version + ' active' : draft ? 'Draft v' + draft.version : 'No active version'}</span>
           </button>;
         })}
@@ -157,7 +165,7 @@ export default function QualityProfiles() {
       <div className="quality-detail">
         {selected ? <>
           <div className="quality-detail-title"><div><span className="catalog-category">{selected.key}</span><h3>{selected.name}</h3><p>{selected.description}</p></div>
-            {!currentDraft && <button type="button" disabled={busy} onClick={() => void createVersion()}>Create draft</button>}
+            <div className="quality-profile-actions">{!selected.isDefault && <button type="button" disabled={busy || !selected.versions.some((item) => item.status === "active")} onClick={() => void setDefault()}>Set as default</button>}{!currentDraft && <button type="button" disabled={busy} onClick={() => void createVersion()}>Create draft</button>}</div>
           </div>
           {draftPolicy && draftVersion !== null && <form className="quality-editor" onSubmit={saveDraft}>
             <div className="quality-editor-heading"><div><strong>Edit draft v{draftVersion}</strong><p>Saving updates only this draft. Activation records an auditable version change.</p></div><button type="button" onClick={() => { setDraftPolicy(null); setDraftVersion(null); }}>Cancel</button></div>

@@ -133,3 +133,4 @@ footer span{color:#aeb7b1}
 .quality-access p{margin:0;color:var(--muted)}
 .quality-message{margin:10px 0;padding:10px 12px;background:#eaf3ec;color:var(--green);border-radius:7px;font-size:11px}
 @media(max-width:780px){.quality-layout{grid-template-columns:1fr}.quality-create form{grid-template-columns:1fr}.quality-history-row{align-items:flex-start;flex-direction:column}.quality-category-row{grid-template-columns:1fr 1fr}.quality-category-row>div{grid-column:1/-1}.quality-access{align-items:flex-start;flex-wrap:wrap}}
+.quality-profile-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}.quality-profile-option>span:first-child{display:grid;gap:5px}.quality-profile-option .quality-version-badge{justify-self:start}

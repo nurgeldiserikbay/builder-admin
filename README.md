@@ -4,7 +4,7 @@ Internal administration interface for BuildPath.
 
 ## Current scope
 
-The console requires a separate staff account and reads the role-protected `GET /api/v1/admin/capabilities` endpoint. Staff can manage quality profile drafts and version history through a role-protected API. Customer accounts cannot sign in here. The saved profiles are not yet wired into review runs or release gates; operations and audit event browsing also remain planned.
+The console requires a separate staff account and reads the role-protected `GET /api/v1/admin/capabilities` endpoint. Staff can manage quality profile drafts and version history through a role-protected API. Customer accounts cannot sign in here. New review runs snapshot the global default profile version and report its rule-based quality gate. The gate does not block publication; operations and audit event browsing also remain planned.
 
 ## Local development
 
