@@ -60,13 +60,14 @@ export default function CapabilityCatalog() {
       if (!response.ok) throw new Error('Sign in failed (' + response.status + ').');
       setPassword('');
       await refreshSession();
+      window.dispatchEvent(new Event('buildpath:staff-session-changed'));
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Sign in failed.'); }
     finally { setSubmitting(false); }
   }
 
   async function logout() {
     try { await fetch(API_BASE_URL + '/admin/auth/logout', { method: 'POST', credentials: 'include', cache: 'no-store' }); }
-    finally { setStaff(null); setManifest(null); setError(''); }
+    finally { setStaff(null); setManifest(null); setError(''); window.dispatchEvent(new Event('buildpath:staff-session-changed')); }
   }
 
   const counts = useMemo(() => {

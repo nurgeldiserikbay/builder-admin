@@ -1,10 +1,11 @@
 import CapabilityCatalog from "./capability-catalog";
+import QualityProfiles from "./quality-profiles";
 
 const areas = [
   {
     index: '01',
-    name: 'Quality profiles',
-    description: 'Review default security, accessibility, performance and SEO checks and their release gates.',
+    name: 'Apply policies to test and release gates',
+    description: 'Connect active profile versions to review runs and require the configured checks before release.',
     state: 'Planned',
   },
   {
@@ -35,7 +36,9 @@ export default function AdminHome() {
         </div>
         <div className="section-title"><div><h2>Current capability manifest</h2><p>Staff-only read endpoint. Statuses are maintained in backend code and versioned with the API.</p></div><span className="count">SOURCE OF TRUTH</span></div>
         <CapabilityCatalog />
-        <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 PLANNED</span></div>
+        <div className="section-title planned-heading"><div><h2>Versioned quality profiles</h2><p>Create policy drafts, review history, and activate a specific version.</p></div><span className="count">STAFF ONLY</span></div>
+        <QualityProfiles />
+        <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
         <div className="area-list">
           {areas.map((area) => <article className="area" key={area.index}>
             <span className="area-index">{area.index}</span>

@@ -4,7 +4,7 @@ Internal administration interface for BuildPath.
 
 ## Current scope
 
-The console requires a separate staff account and reads the role-protected `GET /api/v1/admin/capabilities` endpoint. Staff sessions use an HTTP-only cookie; customer accounts cannot sign in here. Quality profile editing and operations/audit views are not available yet.
+The console requires a separate staff account and reads the role-protected `GET /api/v1/admin/capabilities` endpoint. Staff can manage quality profile drafts and version history through a role-protected API. Customer accounts cannot sign in here. The saved profiles are not yet wired into review runs or release gates; operations and audit event browsing also remain planned.
 
 ## Local development
 
