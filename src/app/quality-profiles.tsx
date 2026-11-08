@@ -184,7 +184,7 @@ export default function QualityProfiles() {
             {selected.versions.length === 0 && <p>No versions have been created.</p>}
             {selected.versions.map((version) => <article key={version.version} className="quality-history-row">
               <div><strong>Version {version.version}</strong><span className="quality-version-badge" data-status={version.status}>{statusText[version.status]}</span><small>Created {new Date(version.createdAt).toLocaleString()} · {version.authoredBy ?? 'Staff'}</small></div>
-              <div>{version.status === 'draft' && <button type="button" onClick={() => editPolicy(version.policy, version.version)}>Edit draft</button>}{version.status !== 'active' && <button type="button" disabled={busy} disabled={busy || (draftPolicy !== null && draftVersion === version.version)} onClick={() => void activate(version.version)}>Activate</button>}</div>
+              <div>{version.status === 'draft' && <button type="button" onClick={() => editPolicy(version.policy, version.version)}>Edit draft</button>}{version.status !== 'active' && <button type="button" disabled={busy || (draftPolicy !== null && draftVersion === version.version)} onClick={() => void activate(version.version)}>Activate</button>}</div>
             </article>)}
           </div>
         </> : <p className="quality-empty">Choose a profile to see its version history, or create the first one.</p>}
