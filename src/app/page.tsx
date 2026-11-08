@@ -22,7 +22,7 @@ export default function AdminHome() {
         <a className="brand" href="/" aria-label="BuildPath Admin home"><span className="brand-mark">B</span><span>buildpath</span></a>
         <div className="console-label">ADMIN CONSOLE</div>
         <div className="nav-current"><span className="nav-icon">▦</span>Overview</div>
-        <div className="sidebar-note"><span className="lock-icon">⌑</span><span>Read-only catalog<br />This page shows public support metadata only. Project data and admin actions remain unavailable until staff authentication and roles are implemented.</span></div>
+        <div className="sidebar-note"><span className="lock-icon">⌑</span><span>Staff-only catalog<br />Customer accounts and project data are not exposed here.</span></div>
         <div className="sidebar-footer">Platform foundation · v0.1</div>
       </aside>
 
@@ -33,9 +33,9 @@ export default function AdminHome() {
           <h1>Know exactly what the platform can deliver.</h1>
           <p className="lead">This catalog reads the versioned capability manifest from the backend. It separates working features from limited, documentation-only, and unavailable flows so product claims stay aligned with implementation.</p>
         </div>
-        <div className="section-title"><div><h2>Current capability manifest</h2><p>Read-only catalog from the API. Statuses are maintained in backend code and versioned with the API.</p></div><span className="count">SOURCE OF TRUTH</span></div>
+        <div className="section-title"><div><h2>Current capability manifest</h2><p>Staff-only read endpoint. Statuses are maintained in backend code and versioned with the API.</p></div><span className="count">SOURCE OF TRUTH</span></div>
         <CapabilityCatalog />
-        <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Require staff authentication, authorization policies, and audit logging.</p></div><span className="count">02 PLANNED</span></div>
+        <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 PLANNED</span></div>
         <div className="area-list">
           {areas.map((area) => <article className="area" key={area.index}>
             <span className="area-index">{area.index}</span>
