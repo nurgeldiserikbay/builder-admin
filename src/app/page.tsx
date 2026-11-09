@@ -2,6 +2,7 @@ import CapabilityCatalog from "./capability-catalog";
 import QualityProfiles from "./quality-profiles";
 import AuditEvents from "./audit-events";
 import AccountPlans from "./account-plans";
+import PlanSettings from "./plan-settings";
 
 const areas = [
   {
@@ -36,6 +37,8 @@ export default function AdminHome() {
         <CapabilityCatalog />
         <div className="section-title planned-heading"><div><h2>Versioned quality profiles</h2><p>Create policy drafts, review history, and activate a specific version.</p></div><span className="count">STAFF ONLY</span></div>
         <QualityProfiles />
+        <div className="section-title planned-heading"><div><h2>Plan prices</h2><p>Prices customers see on their plan page and the contact for upgrading. Changing a price does not change plans already assigned. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
+        <PlanSettings />
         <div className="section-title planned-heading"><div><h2>Customer plans</h2><p>Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
         <AccountPlans />
         <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">ROLE RESTRICTED</span></div>
