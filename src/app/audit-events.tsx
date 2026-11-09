@@ -24,6 +24,7 @@ const eventOptions = [
   ['quality_profile.version_updated', 'Profile version updated'],
   ['quality_profile.version_activated', 'Profile version activated'],
   ['quality_profile.default_changed', 'Default profile changed'],
+  ['account.plan_assigned', 'Customer plan assigned'],
 ];
 
 export default function AuditEvents() {

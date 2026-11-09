@@ -1,6 +1,7 @@
 import CapabilityCatalog from "./capability-catalog";
 import QualityProfiles from "./quality-profiles";
 import AuditEvents from "./audit-events";
+import AccountPlans from "./account-plans";
 
 const areas = [
   {
@@ -20,7 +21,7 @@ export default function AdminHome() {
         <a className="brand" href="/" aria-label="BuildPath Admin home"><span className="brand-mark">B</span><span>buildpath</span></a>
         <div className="console-label">ADMIN CONSOLE</div>
         <div className="nav-current"><span className="nav-icon">▦</span>Overview</div>
-        <div className="sidebar-note"><span className="lock-icon">⌑</span><span>Staff-only catalog<br />Customer accounts and project data are not exposed here.</span></div>
+        <div className="sidebar-note"><span className="lock-icon">⌑</span><span>Staff-only console<br />Customer project data is not exposed here; plans show usage counts only.</span></div>
         <div className="sidebar-footer">Platform foundation · v0.1</div>
       </aside>
 
@@ -35,6 +36,8 @@ export default function AdminHome() {
         <CapabilityCatalog />
         <div className="section-title planned-heading"><div><h2>Versioned quality profiles</h2><p>Create policy drafts, review history, and activate a specific version.</p></div><span className="count">STAFF ONLY</span></div>
         <QualityProfiles />
+        <div className="section-title planned-heading"><div><h2>Customer plans</h2><p>Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
+        <AccountPlans />
         <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">ROLE RESTRICTED</span></div>
         <AuditEvents />
         <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
