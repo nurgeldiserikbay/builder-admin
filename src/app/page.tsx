@@ -4,6 +4,7 @@ import AuditEvents from "./audit-events";
 import AccountPlans from "./account-plans";
 import PlanSettings from "./plan-settings";
 import PrivacySettings from "./privacy-settings";
+import AiPricing from "./ai-pricing";
 
 const areas = [
   {
@@ -44,6 +45,8 @@ export default function AdminHome() {
         <AccountPlans />
         <div className="section-title planned-heading"><div><h2>Account deletion</h2><p>How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
         <PrivacySettings />
+        <div className="section-title planned-heading"><div><h2>AI prices</h2><p>What customers pay for AI requests. Used for project estimates and the cost of each request. Super admins only; audited.</p></div><span className="count">SUPER ADMIN</span></div>
+        <AiPricing />
         <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">ROLE RESTRICTED</span></div>
         <AuditEvents />
         <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
