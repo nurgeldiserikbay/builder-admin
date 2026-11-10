@@ -27,6 +27,8 @@ const eventOptions = [
   ['account.plan_assigned', 'Customer plan assigned'],
   ['plan.price_changed', 'Plan price changed'],
   ['billing.contact_changed', 'Upgrade contact changed'],
+  ['privacy.retention_changed', 'Deletion retention changed'],
+  ['account.deletion_cancelled', 'Account deletion cancelled'],
 ];
 
 export default function AuditEvents() {

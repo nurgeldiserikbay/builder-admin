@@ -22,3 +22,7 @@ Set `NEXT_PUBLIC_API_BASE_URL` to the BuildPath API. On the API, apply migration
 `Dockerfile` builds a standalone Next.js server (`output: "standalone"`). The image calls the API on its own origin (`NEXT_PUBLIC_API_BASE_URL=/api/v1` by default); the reverse proxy routes `/api/*` to the API. Deployment for all services: `builder-back/deploy/README.md`.
 
 Optional browser error reporting: set `NEXT_PUBLIC_SENTRY_DSN` at build time (Sentry or self-hosted GlitchTip). Events carry no cookies, headers, query strings or user data.
+
+## Account deletion
+
+The console sets how many days data of a deleted account is kept before it is purged (1–90) and can restore an account during that period. Both actions are super-admin only and written to the audit history.
