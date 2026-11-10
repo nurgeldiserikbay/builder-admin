@@ -3,6 +3,7 @@ import QualityProfiles from "./quality-profiles";
 import AuditEvents from "./audit-events";
 import AccountPlans from "./account-plans";
 import PlanSettings from "./plan-settings";
+import PrivacySettings from "./privacy-settings";
 
 const areas = [
   {
@@ -41,6 +42,8 @@ export default function AdminHome() {
         <PlanSettings />
         <div className="section-title planned-heading"><div><h2>Customer plans</h2><p>Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
         <AccountPlans />
+        <div className="section-title planned-heading"><div><h2>Account deletion</h2><p>How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.</p></div><span className="count">SUPER ADMIN</span></div>
+        <PrivacySettings />
         <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">ROLE RESTRICTED</span></div>
         <AuditEvents />
         <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
