@@ -30,6 +30,8 @@ const eventOptions = [
   ['privacy.retention_changed', 'Deletion retention changed'],
   ['billing.ai_pricing_changed', 'AI prices changed'],
   ['billing.mode_changed', 'Billing mode changed'],
+  ['payout.account_viewed', 'Payout account viewed'],
+  ['payout.paid_out', 'Specialist payout recorded'],
   ['account.deletion_cancelled', 'Account deletion cancelled'],
 ];
 
