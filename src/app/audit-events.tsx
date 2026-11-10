@@ -28,6 +28,7 @@ const eventOptions = [
   ['plan.price_changed', 'Plan price changed'],
   ['billing.contact_changed', 'Upgrade contact changed'],
   ['privacy.retention_changed', 'Deletion retention changed'],
+  ['billing.ai_pricing_changed', 'AI prices changed'],
   ['account.deletion_cancelled', 'Account deletion cancelled'],
 ];
 
