@@ -12,6 +12,8 @@ const messages: Record<string, string> = {
   PAYOUT_REFERENCE_INVALID: 'Enter the transfer reference from the bank (3–100 characters).',
   PAYMENT_NOT_HELD: 'This payment is no longer waiting for a transfer.',
   STAFF_ROLE_REQUIRED: 'Only super admins can see accounts and record payouts.',
+  REFUND_REFERENCE_REQUIRED: 'This provider has no automatic refund here: refund in its merchant cabinet first, then enter the refund reference.',
+  REFUND_NOTE_REQUIRED: 'Write why the money goes back to the owner (3–300 characters).',
 };
 const money = (value: number) => `${value.toLocaleString('ru-RU')} ₸`;
 
@@ -49,6 +51,12 @@ export default function Payouts() {
     const account = await call<{ holderName: string; iban: string }>(`/admin/payouts/${row.id}/account`, { method: 'POST' });
     setAccounts((current) => ({ ...current, [row.id]: account }));
   });
+  const refund = (row: Row) => act(row.id, async () => {
+    const note = window.prompt(`Return ${money(row.amount)} to the owner of «${row.project}» instead of paying the specialist? Write why (shown to both):`)?.trim();
+    if (!note) return;
+    const reference = window.prompt('Refund reference from the provider cabinet (leave empty for test payments):')?.trim() || null;
+    setRows(await call<Row[]>(`/admin/payouts/${row.id}/refund`, { method: 'POST', body: JSON.stringify({ note, reference }) }));
+  });
   const paidOut = (row: Row) => act(row.id, async () => {
     const reference = (references[row.id] ?? '').trim();
     if (!window.confirm(`Record that ${money(row.payout)} was transferred to ${row.account?.holderName ?? row.specialist} (reference ${reference})? The specialist will be notified.`)) return;
@@ -76,6 +84,7 @@ export default function Payouts() {
               <button type="button" disabled={Boolean(busy) || (references[row.id] ?? '').trim().length < 3} onClick={() => void paidOut(row)}>Mark transferred</button>
             </div>
           )}
+          <div><button type="button" disabled={Boolean(busy)} onClick={() => void refund(row)}>Return to owner…</button></div>
         </div>
       ))}
       {done.length > 0 && (

@@ -32,6 +32,9 @@ const eventOptions = [
   ['billing.mode_changed', 'Billing mode changed'],
   ['payout.account_viewed', 'Payout account viewed'],
   ['payout.paid_out', 'Specialist payout recorded'],
+  ['refund.made', 'Balance refund made'],
+  ['refund.rejected', 'Balance refund rejected'],
+  ['refund.stage_payment', 'Specialist payment returned to owner'],
   ['account.deletion_cancelled', 'Account deletion cancelled'],
 ];
 
