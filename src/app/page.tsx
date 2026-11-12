@@ -8,6 +8,8 @@ import AiPricing from "./ai-pricing";
 import BillingMode from "./billing-mode";
 import Payouts from "./payouts";
 import Refunds from "./refunds";
+import Disputes from "./disputes";
+import Reviews from "./reviews";
 
 const areas = [
   {
@@ -54,6 +56,10 @@ export default function AdminHome() {
         <BillingMode />
         <div className="section-title planned-heading"><div><h2>Specialist payouts</h2><p>Money owners paid through BuildPath for specialists. Make the bank transfer, then record its reference. Super admins only; audited.</p></div><span className="count">Super admin</span></div>
         <Payouts />
+        <div className="section-title planned-heading"><div><h2>Disputes</h2><p>Owners and specialists who disagree about a stage. While a dispute is open its payout is blocked. Read the evidence, write to both sides and decide. Super admins decide; operations auditors read; audited.</p></div><span className="count">Super admin</span></div>
+        <Disputes />
+        <div className="section-title planned-heading"><div><h2>Reported reviews</h2><p>Specialists ask to check a review. Hide only what breaks the rules — insults, personal data, a different job — not an honest low rating. Super admins decide; audited.</p></div><span className="count">Super admin</span></div>
+        <Reviews />
         <div className="section-title planned-heading"><div><h2>Refunds</h2><p>Owners ask to return unspent project balance. Test payments refund at once; with a real provider refund in its cabinet and record the reference. Super admins decide; audited.</p></div><span className="count">Super admin</span></div>
         <Refunds />
         <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">Role restricted</span></div>
