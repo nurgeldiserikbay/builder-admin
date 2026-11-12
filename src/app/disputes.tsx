@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-type QueueRow = { id: string; status: string; kind: string; outcome: string | null; openedBySide: 'owner' | 'specialist'; claimAmount: number | null; createdAt: string; messages: number; project: string; stage: string; specialist: string };
+type Waiting = { side: 'owner' | 'specialist'; days: number; reminded: boolean } | null;
+type QueueRow = { id: string; status: string; kind: string; outcome: string | null; openedBySide: 'owner' | 'specialist'; claimAmount: number | null; createdAt: string; messages: number; waiting?: Waiting; project: string; stage: string; specialist: string };
 type Detail = {
   id: string; kind: string; openedBySide: 'owner' | 'specialist'; claim: string; claimAmount: number | null; status: string; outcome: string | null; resolutionNote: string | null; resolvedAt: string | null; createdAt: string; paymentCreated: boolean;
   messages: Array<{ id: string; side: 'owner' | 'specialist' | 'staff'; text: string; createdAt: string }>;
-  project: string; owner: string; specialist: string; stage: string; role: string;
+  waiting?: Waiting; project: string; owner: string; specialist: string; stage: string; role: string;
   assignment: { status: string; acceptedAt: string | null; completedAt: string | null; revokedAt: string | null; payKind: string; fixedAmount: number | null; hourlyRate: number | null; hourLimit: number | null };
   payments: Array<{ id: string; basis: string; amount: number; status: string; createdAt: string; heldAt: string | null; paidOutAt: string | null }>;
   time: { minutesByStatus: Record<string, number>; entries: number; withoutActions: number };
@@ -88,6 +89,7 @@ export default function Disputes() {
         <button key={row.id} type="button" className="catalog-card" style={{ display: 'grid', gap: 4, textAlign: 'left', width: '100%' }} onClick={() => void openDetail(row.id)} aria-expanded={detail?.id === row.id}>
           <strong>{kinds[row.kind] ?? row.kind}{row.claimAmount !== null ? ` · ${money(row.claimAmount)}` : ''}</strong>
           <span className="catalog-note">{row.project} · {row.stage} · specialist {row.specialist} · opened by {row.openedBySide} {row.createdAt.slice(0, 10)} · {row.messages} messages{row.outcome ? ` · ${row.outcome}` : ''}</span>
+          {row.waiting && <span className="catalog-note">Waiting for the {row.waiting.side}: {row.waiting.days} day(s) without an answer{row.waiting.reminded ? ' · reminded' : ''}</span>}
         </button>
       ))}
       {detail && (
@@ -95,6 +97,7 @@ export default function Disputes() {
           <strong>{kinds[detail.kind] ?? detail.kind} — {detail.project} · {detail.stage}</strong>
           <span className="catalog-note">Owner {detail.owner} · specialist {detail.specialist} ({detail.role}) · opened by the {detail.openedBySide} on {detail.createdAt.slice(0, 10)} · claim {money(detail.claimAmount)} · status {detail.status}</span>
           <blockquote style={{ margin: 0, paddingLeft: 12, borderLeft: '3px solid var(--line)', whiteSpace: 'pre-line' }}>{detail.claim}</blockquote>
+          {detail.waiting && <span className="catalog-note">The {detail.waiting.side} has not answered for {detail.waiting.days} day(s){detail.waiting.reminded ? '; one reminder was sent' : '; a reminder goes after 3 days'}. You may decide on what is there.</span>}
 
           <details open><summary>Evidence</summary>
             <ul>
