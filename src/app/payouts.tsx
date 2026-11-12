@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 
 type Row = {
   id: string; status: 'held' | 'paid_out'; amount: number; fee: number; payout: number; heldAt: string | null; paidOutAt: string | null; reference: string | null;
-  project: string; stage: string; specialist: string; account: { holderName: string; ibanHint: string } | null;
+  project: string; stage: string; specialist: string; account: { holderName: string; ibanHint: string } | null; disputeOpen?: boolean;
 };
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
 const messages: Record<string, string> = {
   PAYOUT_DETAILS_MISSING: 'The specialist has not saved a payout account yet. They see a form on the stage page.',
   PAYOUT_REFERENCE_INVALID: 'Enter the transfer reference from the bank (3–100 characters).',
   PAYMENT_NOT_HELD: 'This payment is no longer waiting for a transfer.',
+  DISPUTE_OPEN: 'There is an open dispute about this stage. Decide it in Disputes before transferring.',
   STAFF_ROLE_REQUIRED: 'Only super admins can see accounts and record payouts.',
   REFUND_REFERENCE_REQUIRED: 'This provider has no automatic refund here: refund in its merchant cabinet first, then enter the refund reference.',
   REFUND_NOTE_REQUIRED: 'Write why the money goes back to the owner (3–300 characters).',
@@ -74,6 +75,7 @@ export default function Payouts() {
         <div key={row.id} className="catalog-card" style={{ display: 'grid', gap: 6 }}>
           <strong>{money(row.payout)} → {row.specialist}</strong>
           <span className="catalog-note">{row.project} · {row.stage} · owner paid {money(row.amount)}{row.fee ? `, BuildPath fee ${money(row.fee)}` : ''}{row.heldAt ? ` · ${row.heldAt.slice(0, 10)}` : ''}</span>
+          {row.disputeOpen && <span className="catalog-note" style={{ color: 'var(--danger, #a12)' }}>Open dispute — the transfer is blocked until it is decided.</span>}
           {!row.account && <span className="catalog-note">No payout account yet.</span>}
           {row.account && !accounts[row.id] && <div><button type="button" disabled={Boolean(busy)} onClick={() => void reveal(row)}>Show account …{row.account.ibanHint} (audited)</button></div>}
           {accounts[row.id] && <code style={{ userSelect: 'all' }}>{accounts[row.id]!.iban} · {accounts[row.id]!.holderName}</code>}
