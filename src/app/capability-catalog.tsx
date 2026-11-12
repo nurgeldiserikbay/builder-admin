@@ -80,7 +80,7 @@ export default function CapabilityCatalog() {
 
   if (loading) return <div className="catalog-state" role="status">Loading staff session…</div>;
   if (!staff) return <section className="admin-login" aria-labelledby="staff-login-heading">
-    <p className="kicker">STAFF ACCESS</p><h2 id="staff-login-heading">Sign in to the admin console</h2>
+    <p className="kicker">Staff access</p><h2 id="staff-login-heading">Sign in to the admin console</h2>
     <p>Use the staff account provisioned for this deployment. Customer accounts cannot access the admin console.</p>
     {error && <div className="catalog-state catalog-error" role="alert">{error}</div>}
     <form onSubmit={login}>
