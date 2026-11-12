@@ -19,7 +19,7 @@ Set `NEXT_PUBLIC_API_BASE_URL` to the BuildPath API. On the API, apply migration
 
 ## Production
 
-`Dockerfile` builds a standalone Next.js server (`output: "standalone"`). The image calls the API on its own origin (`NEXT_PUBLIC_API_BASE_URL=/api/v1` by default); the reverse proxy routes `/api/*` to the API. Deployment for all services: `builder-back/deploy/README.md`.
+`Dockerfile` builds a standalone Next.js server (`output: "standalone"`). The image calls the API on its own origin (`NEXT_PUBLIC_API_BASE_URL=/api/v1` by default); the reverse proxy routes `/api/*` to the API. On hosts without such a proxy (the Render test environment) set `API_INTERNAL_URL` (e.g. `buildpath-api:4000`) and the app forwards `/api/*` to the API itself (`src/app/api/[...path]/route.ts`). Deployment for all services: `builder-back/deploy/README.md`; Render test environment: `builder-back/deploy/RENDER.md`.
 
 Optional browser error reporting: set `NEXT_PUBLIC_SENTRY_DSN` at build time (Sentry or self-hosted GlitchTip). Events carry no cookies, headers, query strings or user data.
 
