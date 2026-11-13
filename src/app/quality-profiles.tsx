@@ -6,7 +6,12 @@ import type { FormEvent } from 'react';
 type Severity = 'critical' | 'high' | 'medium' | 'low';
 type CategoryId = 'security' | 'accessibility' | 'performance' | 'seo';
 type CategoryPolicy = { enabled: boolean; required: boolean; maxOpenCritical: number; maxOpenHigh: number };
-type QualityPolicy = { schemaVersion: 1; minimumRequirementCoverage: number; blockingSeverities: Severity[]; categories: Record<CategoryId, CategoryPolicy> };
+type ScoreKey = 'performance' | 'accessibility' | 'best-practices' | 'seo';
+type BrowserRule = { required: boolean; minScores: Record<ScoreKey, number | null>; maxLcpMs: number | null; maxCls: number | null };
+type QualityPolicy = { schemaVersion: 1; minimumRequirementCoverage: number; blockingSeverities: Severity[]; categories: Record<CategoryId, CategoryPolicy>; browser?: BrowserRule };
+const scoreKeys: Array<{ key: ScoreKey; label: string }> = [{ key: 'performance', label: 'Performance' }, { key: 'accessibility', label: 'Accessibility' }, { key: 'best-practices', label: 'Best practices' }, { key: 'seo', label: 'SEO' }];
+const emptyBrowser: BrowserRule = { required: false, minScores: { performance: null, accessibility: null, 'best-practices': null, seo: null }, maxLcpMs: null, maxCls: null };
+const optionalNumber = (value: string) => (value.trim() === '' ? null : Number(value));
 type Version = { version: number; status: 'draft' | 'active' | 'retired'; policy: QualityPolicy; createdAt: string; activatedAt: string | null; authoredBy: string | null };
 type Profile = { key: string; name: string; description: string; isDefault: boolean; createdAt: string; createdBy: string; versions: Version[] };
 type ProfileListResponse = { data?: Profile[] };
@@ -177,6 +182,15 @@ export default function QualityProfiles() {
                 <label>Max critical <input type="number" min={0} max={100} required value={draftPolicy.categories[id].maxOpenCritical} onChange={(event) => updateCategory(id, { maxOpenCritical: Number(event.target.value) })} /></label>
                 <label>Max high <input type="number" min={0} max={100} required value={draftPolicy.categories[id].maxOpenHigh} onChange={(event) => updateCategory(id, { maxOpenHigh: Number(event.target.value) })} /></label>
               </div>)}
+            </fieldset>
+            <fieldset><legend>Browser check thresholds (site builds)</legend>
+              <p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--muted, #555)" }}>Lighthouse lab scores on a simulated phone, every page. When required, a build is accepted and published only after the browser check met them; a check that could not run does not pass, so the browser check worker must be running. Leave a field empty for no threshold.</p>
+              <label><input type="checkbox" checked={Boolean(draftPolicy.browser?.required)} onChange={(event) => setDraftPolicy({ ...draftPolicy, browser: { ...(draftPolicy.browser ?? emptyBrowser), required: event.target.checked } })} />Required for publishing</label>
+              <div className="quality-check-row">
+                {scoreKeys.map(({ key, label }) => <label key={key} className="quality-number">{label} at least<input type="number" min={1} max={100} placeholder="—" value={draftPolicy.browser?.minScores[key] ?? ''} onChange={(event) => { const browser = draftPolicy.browser ?? emptyBrowser; setDraftPolicy({ ...draftPolicy, browser: { ...browser, minScores: { ...browser.minScores, [key]: optionalNumber(event.target.value) } } }); }} /></label>)}
+                <label className="quality-number">Largest contentful paint at most (ms)<input type="number" min={500} max={60000} step={100} placeholder="—" value={draftPolicy.browser?.maxLcpMs ?? ''} onChange={(event) => setDraftPolicy({ ...draftPolicy, browser: { ...(draftPolicy.browser ?? emptyBrowser), maxLcpMs: optionalNumber(event.target.value) } })} /></label>
+                <label className="quality-number">Layout shift (CLS) at most<input type="number" min={0} max={1} step={0.01} placeholder="—" value={draftPolicy.browser?.maxCls ?? ''} onChange={(event) => setDraftPolicy({ ...draftPolicy, browser: { ...(draftPolicy.browser ?? emptyBrowser), maxCls: optionalNumber(event.target.value) } })} /></label>
+              </div>
             </fieldset>
             <button type="submit" disabled={busy}>{busy ? 'Saving…' : 'Save draft'}</button>
           </form>}
