@@ -6,7 +6,7 @@ type Waiting = { side: 'owner' | 'specialist'; days: number; reminded: boolean }
 type QueueRow = { id: string; status: string; kind: string; outcome: string | null; openedBySide: 'owner' | 'specialist'; claimAmount: number | null; createdAt: string; messages: number; waiting?: Waiting; project: string; stage: string; specialist: string };
 type Detail = {
   id: string; kind: string; openedBySide: 'owner' | 'specialist'; claim: string; claimAmount: number | null; status: string; outcome: string | null; resolutionNote: string | null; resolvedAt: string | null; createdAt: string; paymentCreated: boolean;
-  messages: Array<{ id: string; side: 'owner' | 'specialist' | 'staff'; text: string; createdAt: string }>;
+  messages: Array<{ id: string; side: 'owner' | 'specialist' | 'staff'; text: string; createdAt: string; file?: { name: string; mime: string; bytes: number } | null }>;
   waiting?: Waiting; project: string; owner: string; specialist: string; stage: string; role: string;
   assignment: { status: string; acceptedAt: string | null; completedAt: string | null; revokedAt: string | null; payKind: string; fixedAmount: number | null; hourlyRate: number | null; hourLimit: number | null };
   payments: Array<{ id: string; basis: string; amount: number; status: string; createdAt: string; heldAt: string | null; paidOutAt: string | null }>;
@@ -115,7 +115,8 @@ export default function Disputes() {
           <div>
             <strong>Thread</strong>
             {detail.messages.length === 0 && <p className="catalog-note">No messages yet.</p>}
-            <ul>{detail.messages.map((item) => <li key={item.id}><strong>{item.side}:</strong> <span style={{ whiteSpace: 'pre-line' }}>{item.text}</span> <span className="catalog-note">{item.createdAt.slice(0, 10)}</span></li>)}</ul>
+            <ul>{detail.messages.map((item) => <li key={item.id}><strong>{item.side}:</strong> <span style={{ whiteSpace: 'pre-line' }}>{item.text}</span> <span className="catalog-note">{item.createdAt.slice(0, 10)}</span>
+              {item.file && <> · <a href={`${API_BASE_URL}/admin/disputes/${detail.id}/files/${item.id}`} target="_blank" rel="noopener noreferrer">📎 {item.file.name} ({Math.max(1, Math.round(item.file.bytes / 1024))} KB)</a></>}</li>)}</ul>
           </div>
 
           {detail.status === 'open' ? (
