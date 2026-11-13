@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import CapabilityCatalog from "./capability-catalog";
 import QualityProfiles from "./quality-profiles";
 import AuditEvents from "./audit-events";
@@ -11,69 +14,57 @@ import Refunds from "./refunds";
 import Disputes from "./disputes";
 import Reviews from "./reviews";
 
-const areas = [
-  {
-    index: '01',
-    name: 'Apply policies to test and release gates',
-    description: 'Connect active profile versions to review runs and require the configured checks before release.',
-    state: 'Planned',
-  },
-  {
-  },
+type Section = { key: string; nav: string; title: string; text: string; badge: string; body: React.ReactNode };
+
+/** One section at a time, chosen in the sidebar (or the menu row on a phone); every section stays mounted so data loads once. */
+const sections: Section[] = [
+  { key: 'overview', nav: 'Overview', title: 'Capability manifest', text: 'What the platform can deliver, read from the versioned manifest in backend code: working, limited, documentation-only and unavailable flows. Staff sign in here.', badge: 'Source of truth', body: <CapabilityCatalog /> },
+  { key: 'quality', nav: 'Quality profiles', title: 'Versioned quality profiles', text: 'Policy drafts, history and the active version. The default profile’s active version judges every site build before it can be accepted and published, and new site reviews.', badge: 'Staff only', body: <QualityProfiles /> },
+  { key: 'customers', nav: 'Customer plans', title: 'Customer plans', text: 'Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.', badge: 'Super admin', body: <AccountPlans /> },
+  { key: 'prices', nav: 'Prices', title: 'Plan and AI prices', text: 'Prices customers see on their plan page, the contact for upgrading, and what AI requests cost. Changing a price does not change plans already assigned. Super admins only; audited.', badge: 'Super admin', body: <><PlanSettings /><AiPricing /></> },
+  { key: 'money', nav: 'Balance and payouts', title: 'Project balance, payouts and refunds', text: 'Prepaid billing for AI requests, money owners paid for specialists (make the bank transfer, then record its reference), and requests to return unspent balance. Super admins only; audited.', badge: 'Super admin', body: <><BillingMode /><Payouts /><Refunds /></> },
+  { key: 'disputes', nav: 'Disputes and reviews', title: 'Disputes and reported reviews', text: 'Owners and specialists who disagree about a stage (the payout stays blocked while open), and reviews specialists asked to check. Hide only what breaks the rules, not an honest low rating. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <><Disputes /><Reviews /></> },
+  { key: 'privacy', nav: 'Account deletion', title: 'Account deletion', text: 'How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.', badge: 'Super admin', body: <PrivacySettings /> },
+  { key: 'audit', nav: 'Audit history', title: 'Staff audit history', text: 'Filter security-relevant events. Only super admins and operations auditors can read this history.', badge: 'Role restricted', body: <AuditEvents /> },
 ];
 
 export default function AdminHome() {
+  const [active, setActive] = useState('overview');
+  useEffect(() => {
+    const fromHash = window.location.hash.slice(1);
+    if (sections.some((section) => section.key === fromHash)) setActive(fromHash);
+  }, []);
+  function open(key: string) {
+    setActive(key);
+    window.history.replaceState(null, '', key === 'overview' ? window.location.pathname : `#${key}`);
+    window.scrollTo({ top: 0 });
+  }
   return (
     <main className="admin-shell">
       <aside className="sidebar">
         <a className="brand" href="/" aria-label="BuildPath Admin home"><span className="brand-mark">B</span><span>BuildPath</span></a>
         <div className="console-label">Admin console</div>
-        <div className="nav-current"><span className="nav-icon">▦</span>Overview</div>
-        <div className="sidebar-note"><span className="lock-icon">⌑</span><span>Staff-only console<br />Customer project data is not exposed here; plans show usage counts only.</span></div>
+        <nav className="admin-nav" aria-label="Sections">
+          {sections.map((section) => (
+            <button key={section.key} type="button" className="nav-item" aria-current={active === section.key ? 'page' : undefined} onClick={() => open(section.key)}>{section.nav}</button>
+          ))}
+        </nav>
+        <div className="sidebar-note"><span className="lock-icon" aria-hidden="true">⌑</span><span>Staff-only console. Customer project content is not shown here; plans show usage counts only.</span></div>
         <div className="sidebar-footer">Platform foundation · v0.1</div>
       </aside>
 
       <section className="content">
-        <header className="topline"><span>BuildPath platform</span><span className="status"><i /> Support catalog · read only</span></header>
-        <div className="intro">
-          <p className="kicker">Administration</p>
-          <h1>Know exactly what the platform can deliver.</h1>
-          <p className="lead">After staff sign-in, the catalog reads the versioned capability manifest from the backend. It separates working features from limited, documentation-only, and unavailable flows so product claims stay aligned with implementation.</p>
-        </div>
-        <div className="section-title"><div><h2>Current capability manifest</h2><p>Staff-only read endpoint. Statuses are maintained in backend code and versioned with the API.</p></div><span className="count">Source of truth</span></div>
-        <CapabilityCatalog />
-        <div className="section-title planned-heading"><div><h2>Versioned quality profiles</h2><p>Create policy drafts, review history, and activate a specific version.</p></div><span className="count">Staff only</span></div>
-        <QualityProfiles />
-        <div className="section-title planned-heading"><div><h2>Plan prices</h2><p>Prices customers see on their plan page and the contact for upgrading. Changing a price does not change plans already assigned. Super admins only; every change is audited.</p></div><span className="count">Super admin</span></div>
-        <PlanSettings />
-        <div className="section-title planned-heading"><div><h2>Customer plans</h2><p>Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.</p></div><span className="count">Super admin</span></div>
-        <AccountPlans />
-        <div className="section-title planned-heading"><div><h2>Account deletion</h2><p>How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.</p></div><span className="count">Super admin</span></div>
-        <PrivacySettings />
-        <div className="section-title planned-heading"><div><h2>AI prices</h2><p>What customers pay for AI requests. Used for project estimates and the cost of each request. Super admins only; audited.</p></div><span className="count">Super admin</span></div>
-        <AiPricing />
-        <div className="section-title planned-heading"><div><h2>Project balance</h2><p>Prepaid billing: projects pay for AI requests from a balance that owners top up through the payment provider. Super admins only; audited.</p></div><span className="count">Super admin</span></div>
-        <BillingMode />
-        <div className="section-title planned-heading"><div><h2>Specialist payouts</h2><p>Money owners paid through BuildPath for specialists. Make the bank transfer, then record its reference. Super admins only; audited.</p></div><span className="count">Super admin</span></div>
-        <Payouts />
-        <div className="section-title planned-heading"><div><h2>Disputes</h2><p>Owners and specialists who disagree about a stage. While a dispute is open its payout is blocked. Read the evidence, write to both sides and decide. Super admins decide; operations auditors read; audited.</p></div><span className="count">Super admin</span></div>
-        <Disputes />
-        <div className="section-title planned-heading"><div><h2>Reported reviews</h2><p>Specialists ask to check a review. Hide only what breaks the rules — insults, personal data, a different job — not an honest low rating. Super admins decide; audited.</p></div><span className="count">Super admin</span></div>
-        <Reviews />
-        <div className="section-title planned-heading"><div><h2>Refunds</h2><p>Owners ask to return unspent project balance. Test payments refund at once; with a real provider refund in its cabinet and record the reference. Super admins decide; audited.</p></div><span className="count">Super admin</span></div>
-        <Refunds />
-        <div className="section-title planned-heading"><div><h2>Staff audit history</h2><p>Filter security-relevant events. Only super admins and operations auditors can read this history.</p></div><span className="count">Role restricted</span></div>
-        <AuditEvents />
-        <div className="section-title planned-heading"><div><h2>Next admin areas</h2><p>Need their own scoped APIs and audited authorization before they can be enabled.</p></div><span className="count">02 NEXT</span></div>
-        <div className="area-list">
-          {areas.map((area) => <article className="area" key={area.index}>
-            <span className="area-index">{area.index}</span>
-            <div className="area-copy"><h3>{area.name}</h3><p>{area.description}</p></div>
-            <span className="planned">{area.state}</span>
-          </article>)}
-        </div>
-        <div className="security-note"><span aria-hidden="true">◈</span><div><strong>Admin is a separate trust boundary</strong><p>The public capability manifest contains no customer project data. Audit history is restricted to authorized staff; project records and release controls remain unavailable until their own scoped workflows are implemented.</p></div></div>
-        <footer>BuildPath internal tooling <span>Customer project and release controls are not connected</span></footer>
+        <header className="topline"><span>BuildPath platform · Administration</span><span className="status"><i /> Separate trust boundary</span></header>
+        {sections.map((section) => (
+          <section key={section.key} className="admin-section" hidden={active !== section.key} aria-labelledby={`section-${section.key}`}>
+            <div className="section-head">
+              <div><h1 id={`section-${section.key}`}>{section.title}</h1><p className="lead">{section.text}</p></div>
+              <span className="count">{section.badge}</span>
+            </div>
+            <div className="section-body">{section.body}</div>
+          </section>
+        ))}
+        <footer>BuildPath internal tooling <span>Project content and release controls are not connected to this console</span></footer>
       </section>
     </main>
   );
