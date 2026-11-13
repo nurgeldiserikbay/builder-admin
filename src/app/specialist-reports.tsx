@@ -40,7 +40,11 @@ export default function SpecialistReports() {
   const [error, setError] = useState('');
   const [done, setDone] = useState('');
 
-  const load = useCallback(() => { setError(''); call<Row[]>(`/admin/specialist-reports?status=${status}`).then(setRows).catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not load complaints.')); }, [status]);
+  const load = useCallback(() => {
+    setError('');
+    call<Row[]>(`/admin/specialist-reports?status=${status}`).then((next) => { setRows(next); if (status === 'pending') window.dispatchEvent(new CustomEvent('buildpath:open-card-reports', { detail: next.length })); })
+      .catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not load complaints.'));
+  }, [status]);
   useEffect(() => {
     load();
     window.addEventListener('buildpath:staff-session-changed', load);
@@ -52,7 +56,7 @@ export default function SpecialistReports() {
     const confirmText = decision === 'hide_card' ? `Hide the card of ${row.profile.displayName} from the catalog? They cannot publish it again until you restore it.` : decision === 'remove_work' ? `Remove the work “${row.work?.title ?? ''}” from the card?` : null;
     if (confirmText && !window.confirm(confirmText)) return;
     setBusy(row.id); setError(''); setDone('');
-    try { setRows(await call<Row[]>(`/admin/specialist-reports/${row.id}/decide`, { method: 'POST', body: JSON.stringify({ decision, note: note(row.id) }) })); }
+    try { const next = await call<Row[]>(`/admin/specialist-reports/${row.id}/decide`, { method: 'POST', body: JSON.stringify({ decision, note: note(row.id) }) }); setRows(next); window.dispatchEvent(new CustomEvent('buildpath:open-card-reports', { detail: next.length })); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Failed.'); } finally { setBusy(''); }
   }
   async function unblock(row: Row) {
@@ -62,8 +66,7 @@ export default function SpecialistReports() {
   }
 
   return (
-    <div className="catalog" style={{ marginTop: 24 }}>
-      <h3 style={{ margin: 0 }}>Complaints about specialist cards</h3>
+    <div className="catalog">
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="button" aria-pressed={status === 'pending'} onClick={() => setStatus('pending')}>Open</button>
         <button type="button" aria-pressed={status === 'decided'} onClick={() => setStatus('decided')}>Decided</button>

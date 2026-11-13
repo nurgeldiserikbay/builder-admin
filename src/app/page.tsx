@@ -24,13 +24,21 @@ const sections: Section[] = [
   { key: 'customers', nav: 'Customer plans', title: 'Customer plans', text: 'Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.', badge: 'Super admin', body: <AccountPlans /> },
   { key: 'prices', nav: 'Prices', title: 'Plan and AI prices', text: 'Prices customers see on their plan page, the contact for upgrading, and what AI requests cost. Changing a price does not change plans already assigned. Super admins only; audited.', badge: 'Super admin', body: <><PlanSettings /><AiPricing /></> },
   { key: 'money', nav: 'Balance and payouts', title: 'Project balance, payouts and refunds', text: 'Prepaid billing for AI requests, money owners paid for specialists (make the bank transfer, then record its reference), and requests to return unspent balance. Super admins only; audited.', badge: 'Super admin', body: <><BillingMode /><Payouts /><Refunds /></> },
-  { key: 'disputes', nav: 'Disputes and reviews', title: 'Disputes, reported reviews and cards', text: 'Owners and specialists who disagree about a stage (the payout stays blocked while open), reviews specialists asked to check, and complaints about catalog cards. Hide only what breaks the rules, not an honest low rating. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <><Disputes /><Reviews /><SpecialistReports /></> },
+  { key: 'disputes', nav: 'Disputes and reviews', title: 'Disputes and reported reviews', text: 'Owners and specialists who disagree about a stage (the payout stays blocked while open), and reviews specialists asked to check. Hide only what breaks the rules, not an honest low rating. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <><Disputes /><Reviews /></> },
+  { key: 'cards', nav: 'Specialist cards', title: 'Complaints about specialist cards', text: 'Complaints about a catalog card or one of its works: dismiss, remove the work, or hide the card until you allow publishing again. You see the complaint, not who sent it; open links in the works only from an isolated browser. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <SpecialistReports /> },
   { key: 'privacy', nav: 'Account deletion', title: 'Account deletion', text: 'How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.', badge: 'Super admin', body: <PrivacySettings /> },
   { key: 'audit', nav: 'Audit history', title: 'Staff audit history', text: 'Filter security-relevant events. Only super admins and operations auditors can read this history.', badge: 'Role restricted', body: <AuditEvents /> },
 ];
 
 export default function AdminHome() {
   const [active, setActive] = useState('overview');
+  // Open complaints about cards, reported by the section itself once it has loaded them.
+  const [openCards, setOpenCards] = useState(0);
+  useEffect(() => {
+    const update = (event: Event) => setOpenCards((event as CustomEvent<number>).detail);
+    window.addEventListener('buildpath:open-card-reports', update);
+    return () => window.removeEventListener('buildpath:open-card-reports', update);
+  }, []);
   useEffect(() => {
     const fromHash = window.location.hash.slice(1);
     if (sections.some((section) => section.key === fromHash)) setActive(fromHash);
@@ -47,7 +55,7 @@ export default function AdminHome() {
         <div className="console-label">Admin console</div>
         <nav className="admin-nav" aria-label="Sections">
           {sections.map((section) => (
-            <button key={section.key} type="button" className="nav-item" aria-current={active === section.key ? 'page' : undefined} onClick={() => open(section.key)}>{section.nav}</button>
+            <button key={section.key} type="button" className="nav-item" aria-current={active === section.key ? 'page' : undefined} onClick={() => open(section.key)}>{section.nav}{section.key === 'cards' && openCards > 0 ? ` (${openCards})` : ''}</button>
           ))}
         </nav>
         <div className="sidebar-note"><span className="lock-icon" aria-hidden="true">⌑</span><span>Staff-only console. Customer project content is not shown here; plans show usage counts only.</span></div>
