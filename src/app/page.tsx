@@ -13,6 +13,7 @@ import Payouts from "./payouts";
 import Refunds from "./refunds";
 import Disputes from "./disputes";
 import Reviews from "./reviews";
+import SpecialistReports from "./specialist-reports";
 
 type Section = { key: string; nav: string; title: string; text: string; badge: string; body: React.ReactNode };
 
@@ -23,7 +24,7 @@ const sections: Section[] = [
   { key: 'customers', nav: 'Customer plans', title: 'Customer plans', text: 'Look up a customer by e-mail, see usage against limits, and assign a plan after an offline payment. Super admins only; every change is audited.', badge: 'Super admin', body: <AccountPlans /> },
   { key: 'prices', nav: 'Prices', title: 'Plan and AI prices', text: 'Prices customers see on their plan page, the contact for upgrading, and what AI requests cost. Changing a price does not change plans already assigned. Super admins only; audited.', badge: 'Super admin', body: <><PlanSettings /><AiPricing /></> },
   { key: 'money', nav: 'Balance and payouts', title: 'Project balance, payouts and refunds', text: 'Prepaid billing for AI requests, money owners paid for specialists (make the bank transfer, then record its reference), and requests to return unspent balance. Super admins only; audited.', badge: 'Super admin', body: <><BillingMode /><Payouts /><Refunds /></> },
-  { key: 'disputes', nav: 'Disputes and reviews', title: 'Disputes and reported reviews', text: 'Owners and specialists who disagree about a stage (the payout stays blocked while open), and reviews specialists asked to check. Hide only what breaks the rules, not an honest low rating. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <><Disputes /><Reviews /></> },
+  { key: 'disputes', nav: 'Disputes and reviews', title: 'Disputes, reported reviews and cards', text: 'Owners and specialists who disagree about a stage (the payout stays blocked while open), reviews specialists asked to check, and complaints about catalog cards. Hide only what breaks the rules, not an honest low rating. Super admins decide; operations auditors read; audited.', badge: 'Super admin', body: <><Disputes /><Reviews /><SpecialistReports /></> },
   { key: 'privacy', nav: 'Account deletion', title: 'Account deletion', text: 'How long data of a deleted account is kept before it is purged, and restoring an account deleted by mistake. Super admins only; every change is audited.', badge: 'Super admin', body: <PrivacySettings /> },
   { key: 'audit', nav: 'Audit history', title: 'Staff audit history', text: 'Filter security-relevant events. Only super admins and operations auditors can read this history.', badge: 'Role restricted', body: <AuditEvents /> },
 ];
