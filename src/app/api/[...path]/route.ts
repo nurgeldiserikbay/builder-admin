@@ -40,17 +40,26 @@ async function forward(request: NextRequest): Promise<Response> {
   headers.set("x-forwarded-proto", request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() || incoming.protocol.replace(":", ""));
 
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
-  let upstream: Response;
-  try {
-    upstream = await fetch(target, {
-      method: request.method,
-      headers,
-      body: hasBody ? await request.arrayBuffer() : undefined,
-      redirect: "manual",
-      cache: "no-store",
-    });
-  } catch {
-    return Response.json({ error: { code: "API_UNAVAILABLE", message: "The API is not reachable right now." } }, { status: 502 });
+  const body = hasBody ? await request.arrayBuffer() : undefined;
+  // A free API instance sleeps when idle. While it wakes, the host answers with its own page or its own 429 (not the API's
+  // JSON), or the connection fails: such a request never reached the API and is sent again for up to 75 s. Each try has a time
+  // limit, as Node would otherwise wait minutes for headers. A failed connection is retried only for reads.
+  const send = () => fetch(target, { method: request.method, headers, body, redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(hasBody ? 60_000 : 20_000) });
+  const fromHost = (response: Response) => [429, 502, 503, 504].includes(response.status) && !(response.headers.get("content-type") ?? "").includes("application/json");
+  const deadline = Date.now() + 75_000;
+  let upstream: Response | null = null;
+  while (true) {
+    try {
+      upstream = await send();
+      if (!fromHost(upstream) || Date.now() > deadline) break;
+      await upstream.body?.cancel().catch(() => undefined);
+    } catch {
+      if (hasBody || Date.now() > deadline) { upstream = null; break; }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+  }
+  if (!upstream || fromHost(upstream)) {
+    return Response.json({ message: "API_WAKING_UP", error: { code: "API_UNAVAILABLE", message: "The API is waking up after being idle; this takes up to a minute. Try again shortly." } }, { status: 503 });
   }
 
   const responseHeaders = new Headers();
